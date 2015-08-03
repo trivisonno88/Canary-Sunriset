@@ -1,0 +1,202 @@
+#include <SoftwareSerial.h>
+#include <dht.h>
+#define ON true
+#define foto A1
+#define sun 9  
+
+// variabili globali che modifica la funzione SunSetRise
+  double luce = 0.00;
+  double notte =0.00;  
+  double luceLed;  
+  double passo = 0.10;    
+  boolean nightMode;
+  boolean simulationMode;
+// variabili gestione sensori e modulo wifi  
+dht DHT;
+
+#define DHT11_PIN 8 
+#define DEBUG true
+SoftwareSerial esp8266(2,3); // make RX Arduino line is pin 2, make TX Arduino line is pin 3.
+                             // This means that you need to connect the TX line from the esp to the Arduino's pin 2
+        
+                             // and the RX line from the esp to the Arduino's pin 3
+
+
+  String webpage1 = "<h1>Monitoraggio Canarini</h1><h2>Temperatura</h2><button style=\"height: 60px; width: 80px\">"; 
+  String webpage3 = "</button><BR>";
+  
+  String webpage4 = "<h2>Umidit&#225</h2><button style=\"height: 60px; width: 80px\"> "; 
+  String webpage5 = "</button> ";
+  
+ 
+                               
+void setup()
+{
+
+  pinMode(sun, OUTPUT);
+  pinMode(foto,INPUT);
+  simulationMode=!ON;
+      
+  Serial.begin(9600);
+  esp8266.begin(9600); // your esp's baud rate might be different
+  
+  pinMode(11,OUTPUT);
+  digitalWrite(11,LOW);
+  
+  pinMode(12,OUTPUT);
+  digitalWrite(12,LOW);
+  
+  pinMode(13,OUTPUT);
+  digitalWrite(13,LOW);
+   
+  sendData("AT+RST\r\n",2000,DEBUG); // reset module
+  sendData("AT+CWMODE=2\r\n",1000,DEBUG); // configure as access point
+  sendData("AT+CIFSR\r\n",1000,DEBUG); // get ip address
+  sendData("AT+CIPMUX=1\r\n",1000,DEBUG); // configure for multiple connections
+  sendData("AT+CIPSERVER=1,80\r\n",1000,DEBUG); // turn on server on port 80
+
+  
+}
+ 
+void loop()
+{
+  DHT.read11(DHT11_PIN);
+  String str1  = webpage1 + DHT.temperature + webpage3; 
+  String str2 =str1+ webpage4+ DHT.humidity + webpage5;// + webpage6 + webpage7;
+ 
+  SunSetRise(sun,foto,simulationMode);
+     
+  
+  if(esp8266.available()) // check if the esp is sending a message 
+  {
+ 
+    
+    if(esp8266.find("+IPD,"))
+    {
+     delay(1000); // wait for the serial buffer to fill up (read all the serial data)
+     // get the connection id so that we can then disconnect
+     int connectionId = esp8266.read()-48; // subtract 48 because the read() function returns 
+                                           // the ASCII decimal value and 0 (the first decimal number) starts at 48
+         
+     esp8266.find("pin="); // advance cursor to "pin="
+     
+     int pinNumber = (esp8266.read()-48)*10; // get first number i.e. if the pin 13 then the 1st number is 1, then multiply to get 10
+     pinNumber += (esp8266.read()-48); // get second number, i.e. if the pin number is 13 then the 2nd number is 3, then add to the first number
+      if (pinNumber==11){
+      simulationMode=!simulationMode;
+      luce = 0.00;
+      notte =0.00;  
+           
+      nightMode=!ON;
+        
+      }
+     digitalWrite(pinNumber, !digitalRead(pinNumber)); // toggle pin    
+     
+      //provo a creare una funzione che invia dati alla pagina
+     
+     
+     //creo una stringa che invia il comando al modulo per inviare dei dati alla pagina "AT+CIPSEND= <id>,<length>"
+     String invia_dati= "AT+CIPSEND=";      //Comando
+     invia_dati+= connectionId;             //Aggiungo la stringa che contiene id della connessione
+     invia_dati+= ",";                      //Aggiungo la virgola che separa 
+     invia_dati+= str2.length();             //Aggiungo lunghezza del dato
+     invia_dati+= "\r\n";                   //Termina
+     
+     sendData(invia_dati,1000,DEBUG);        //Invia il comando
+     esp8266.print(str2);                     //Invio il dato 
+
+    
+
+     // make close command
+ String  closeCommand = "AT+CIPCLOSE="; 
+         closeCommand+=connectionId; // append connection id
+         closeCommand+="\r\n";
+     
+         sendData(closeCommand,1000,DEBUG); // close connection     
+     
+    }
+  }
+
+  
+  delay(1);
+}
+ 
+/*
+* Name: sendData
+* Description: Function used to send data to ESP8266.
+* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+* Returns: The response from the esp8266 (if there is a reponse)
+*/
+String sendData(String command, const int timeout, boolean debug)
+{
+    String response = "";
+    
+    esp8266.print(command); // send the read character to the esp8266
+    
+    long int time = millis();
+    
+    while( (time+timeout) > millis())
+    {
+      while(esp8266.available())
+      { 
+        // The esp has data so display its output to the serial window 
+        char c = esp8266.read(); // read the next character.
+        response+=c;
+      }  
+    }
+    
+    if(debug)
+    {
+      Serial.print(response);
+    }
+    
+    return response;
+}
+
+void SunSetRise (int pin,int fotoresistenza, boolean mode ){
+  
+ 
+  
+//CICLO ALBA TRAMONTO
+   double val = ((analogRead(fotoresistenza))/3.8)-40;   //Legge dal canale analogico
+                                                  //e scala rispetto al livello luminoso led
+                                                  //intensità_luminsa_max/255=3.8
+ if(mode){    
+  // set the brightness of pin :
+     if(val<=(luce)){
+      if(val<0)val=0;
+        luceLed=luce;//-val;
+        analogWrite(pin,luceLed);
+       }
+      else  
+      analogWrite(pin,LOW);
+     
+ if(!nightMode){
+    //incremento luminosità
+   luce+= passo;
+ 
+    // controllo alba o tramonto
+   if (luce <= 0.00 || luce >= 255.00) {
+     passo = 0-passo ;
+     if(luce<=0.00)
+      nightMode=ON;
+  }
+  
+  
+ }
+else{
+    notte=notte+passo;
+    if(notte>=200){
+      
+      nightMode=!ON;
+      notte=0;
+      }
+   
+    }
+ }
+ else{
+  analogWrite(pin,LOW);
+  }
+  Serial.println(luce);
+  
+  }
