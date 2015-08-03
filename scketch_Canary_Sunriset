@@ -21,13 +21,27 @@ SoftwareSerial esp8266(2,3); // make RX Arduino line is pin 2, make TX Arduino l
         
                              // and the RX line from the esp to the Arduino's pin 3
 
-
-  String webpage1 = "<h1>Monitoraggio Canarini</h1><h2>Temperatura</h2><button style=\"height: 60px; width: 80px\">"; 
-  String webpage3 = "</button><BR>";
+  String title="<h1>Monitoraggio Canarini</h1><h2>";
+  String webpageT = "Temperatura";
+  String preButton="</h2><button style=\"height: 60px; width: 80px\">" ;
+  String button = "</button><BR>";
+  String webpageU = "Umidit&#225"; 
+  String str="";
+  String webpageM ="Temperatura questa settimana";
+  String webpageMU ="Umidit&#225 questa settimana";
+  String webpageD ="Temperatura media oggi</h2>";
+  String webpageDU ="Umidit&#225 media oggi</h2>";
   
-  String webpage4 = "<h2>Umidit&#225</h2><button style=\"height: 60px; width: 80px\"> "; 
-  String webpage5 = "</button> ";
-  
+  // variabili per la gestione del monitoraggio
+  int hour=0;
+  int arrayTemp[]={0, 0, 0, 0, 0, 0, 0};  
+  int arrayHum[]={0, 0, 0, 0, 0, 0, 0};
+  int t=0; 
+  int somma, sommaU, nr, media, mediaU;
+  int nrWeek=0;
+  int nrWeekU=0;
+  int mediaWeek=0;
+  int mediaWeekU=0;
  
                                
 void setup()
@@ -61,9 +75,8 @@ void setup()
 void loop()
 {
   DHT.read11(DHT11_PIN);
-  String str1  = webpage1 + DHT.temperature + webpage3; 
-  String str2 =str1+ webpage4+ DHT.humidity + webpage5;// + webpage6 + webpage7;
- 
+  
+  
   SunSetRise(sun,foto,simulationMode);
      
   
@@ -82,15 +95,54 @@ void loop()
      
      int pinNumber = (esp8266.read()-48)*10; // get first number i.e. if the pin 13 then the 1st number is 1, then multiply to get 10
      pinNumber += (esp8266.read()-48); // get second number, i.e. if the pin number is 13 then the 2nd number is 3, then add to the first number
+      
+      
       if (pinNumber==11){
       simulationMode=!simulationMode;
       luce = 0.00;
       notte =0.00;  
            
       nightMode=!ON;
-        
+      digitalWrite(pinNumber, !digitalRead(pinNumber)); // toggle pin   
       }
-     digitalWrite(pinNumber, !digitalRead(pinNumber)); // toggle pin    
+      if (pinNumber==12){
+        int T=DHT.temperature;
+      str=title + webpageT + preButton+ T+"&#176" + button;
+        if(T>=35)
+          str+="<BR><BR>Troppo caldo";
+        if(T<=20)
+          str+="<BR><BR>Troppo freddo";  
+      }
+      if (pinNumber==13){
+        int U=DHT.humidity;
+      str=title + webpageU+ preButton+ U+"%" + button;
+        if(U>=35)
+          str+="<BR><BR>Arieggiare ambiente";
+      }
+
+      if (pinNumber==10){
+      str=title + webpageM+ preButton + mediaWeek+"&#176" + button;
+        if(mediaWeek==0)
+          str=title + webpageM+ preButton + "no data" + button;
+      }
+      if (pinNumber==14){
+      str=title + webpageMU+ preButton + mediaWeekU+"%" + button;
+        if(mediaWeekU==0)
+          str=title + webpageMU+ preButton + "no data" + button;
+      }
+      if (pinNumber==15){
+      str=title + webpageD+ preButton+ media+"&#176" + button;
+        if(media==0)
+          str=title + webpageD+ preButton + "no data" + button;
+      }
+      if (pinNumber==16){
+      str=title + webpageDU+ preButton+ mediaU+"%" + button;
+        if(mediaU==0)
+          str=title + webpageDU+ preButton + "no data" + button;
+      }       
+      
+                        
+        
      
       //provo a creare una funzione che invia dati alla pagina
      
@@ -99,11 +151,11 @@ void loop()
      String invia_dati= "AT+CIPSEND=";      //Comando
      invia_dati+= connectionId;             //Aggiungo la stringa che contiene id della connessione
      invia_dati+= ",";                      //Aggiungo la virgola che separa 
-     invia_dati+= str2.length();             //Aggiungo lunghezza del dato
+     invia_dati+= str.length();             //Aggiungo lunghezza del dato
      invia_dati+= "\r\n";                   //Termina
      
-     sendData(invia_dati,1000,DEBUG);        //Invia il comando
-     esp8266.print(str2);                     //Invio il dato 
+     sendData(invia_dati,2000,DEBUG);        //Invia il comando
+     esp8266.print(str);                     //Invio il dato 
 
     
 
@@ -119,6 +171,7 @@ void loop()
 
   
   delay(1);
+  mediaSettimanale( );
 }
  
 /*
@@ -158,14 +211,14 @@ void SunSetRise (int pin,int fotoresistenza, boolean mode ){
  
   
 //CICLO ALBA TRAMONTO
-   double val = ((analogRead(fotoresistenza))/3.8)-40;   //Legge dal canale analogico
+   double val = ((analogRead(fotoresistenza))/3.8)-80;   //Legge dal canale analogico
                                                   //e scala rispetto al livello luminoso led
                                                   //intensità_luminsa_max/255=3.8
  if(mode){    
   // set the brightness of pin :
      if(val<=(luce)){
       if(val<0)val=0;
-        luceLed=luce;//-val;
+        luceLed=luce-val;
         analogWrite(pin,luceLed);
        }
       else  
@@ -200,3 +253,69 @@ else{
   Serial.println(luce);
   
   }
+
+
+   void mediaSettimanale( ){
+
+    
+  //provo a calcolare le temperatura media: la simulazione dura 7000 cicli da 1 ms (trascurando il secondo di attesa se vi è una richiesta dall' utente)
+  //campioniamo ogni 100 cicli per ottenere 70 campioni al giorno 
+     hour++;
+     if(hour>=100){
+      
+          somma+=DHT.temperature;
+          sommaU+=DHT.humidity;
+          
+      
+      nr ++;
+      if (nr >= 70)
+       {
+        media = somma/nr;
+        mediaU = sommaU/nr;
+        nr = 0;
+        somma = 0;
+        sommaU=0;
+        arrayTemp[t]=media;
+        arrayHum[t]=mediaU;
+        t++;
+        if(t==7)t=0;
+        Serial.print("Umidità media settimanale=");
+        Serial.println(mediaWeekU);
+        Serial.print("Temperatura media settimanale=");
+        Serial.println(mediaWeek);
+        
+        int j=0;
+        
+       int sommaWeek=0;
+       int sommaWeekU=0;
+       
+       while(j<7){
+       if (arrayTemp[j]!=0){
+        sommaWeek+= arrayTemp[j];
+        nrWeek++;
+        mediaWeek=sommaWeek/nrWeek;
+        
+        
+        }
+        j++;
+       }
+       nrWeek=0;
+       j=0;
+       while(j<7){
+       if (arrayHum[j]!=0){
+        sommaWeekU+= arrayHum[j];
+        nrWeek++;
+        mediaWeekU=sommaWeekU/nrWeek;
+        
+        
+        }
+        j++;
+       }
+       nrWeek=0;
+        }
+        hour=0;
+         
+       }
+      
+    
+    }
