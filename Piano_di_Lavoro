@@ -1,5 +1,10 @@
 Prossimi passi da fare:
 
--Configurare il webserver sulla macchina (EasyPHP)
+-Configurare il webserver sulla macchina  -FATTO-
+    Si è preferito installare il webserver EasyPHP su una "pen drive" in modo da eliminare la dipendenza da una sola macchina.
+    Basta collegare il disco rimovibile ad una macchina che gira con sistema operativo Windows e avviare il server. (Chiedere 
+    al prof se è stata una buona decisione)
+    
 -Individuare bene l'architettura del sistema (Chiedere al prof)
+
 -Completare documentazione
