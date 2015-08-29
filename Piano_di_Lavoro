@@ -8,7 +8,7 @@ Prossimi passi da fare:
 -Scrivere il codice della pagina web che consente di gestire la comunicazione tra Arduino ed il WebServer
     Creazione database e inserimento dati campione      -FATTO-
     Interrogazione di un database con PHP               -FATTO-
-    Popolamento database con PHP                        (da fare)
+    Inserimento valori in database da PHP               -FATTO-
     
 -Individuare bene l'architettura del sistema (Chiedere al prof).
 
