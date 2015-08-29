@@ -5,7 +5,10 @@ Prossimi passi da fare:
     Basta collegare il disco rimovibile ad una macchina che gira con sistema operativo Windows e avviare il server. (Chiedere 
     al prof se è stata una buona decisione)
     
--Scrivere il codice della pagina web che consente di gestire la comunicazione tra Arduino ed il WebServer.
+-Scrivere il codice della pagina web che consente di gestire la comunicazione tra Arduino ed il WebServer
+    Creazione database e inserimento dati campione      -FATTO-
+    Interrogazione di un database con PHP               -FATTO-
+    Popolamento database con PHP                        (da fare)
     
 -Individuare bene l'architettura del sistema (Chiedere al prof).
 
