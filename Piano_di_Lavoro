@@ -11,6 +11,9 @@ Prossimi passi da fare:
     Inserimento valori in database da PHP               -FATTO-
     Inserite nella pagina bottone operazioni            -FATTO-
     
+-Implementazione dei casi d'suo
+    UC1                                                 -FATTO-
+    
 -Individuare bene l'architettura del sistema            (Chiedere al prof.)
     Trasformare il PC in un router wifi (questo è       -FATTO-
     necessario dato che arduino deve accedere al 
