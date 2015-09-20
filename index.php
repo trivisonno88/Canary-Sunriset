@@ -10,7 +10,7 @@
 	?>
 	
 	<br><br>
-	<strong>Accedi</strong> o <strong>Registra</strong> allevatore
+	<strong>Accesso</strong> allevatore
 	<br><br>
 	
 	<form action="login.php" method="POST">
@@ -19,7 +19,8 @@
 	<input type="submit" name="submit" value="Accedi">
 	</form>	
 	
-	<input type="button" onclick="location.href='registrazione_allevatore.php'" value="Nuovo Allevatore"/>
-	
+	<b> Amministratore Sistema </b>
+	<input type="button" onclick="location.href='amministratore.php'" value="Admin"/>
+
 </body>
 </html>
