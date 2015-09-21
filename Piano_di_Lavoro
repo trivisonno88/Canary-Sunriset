@@ -2,8 +2,8 @@ Prossimi passi da fare:
 
 -Configurare il webserver sulla macchina                -FATTO-
     Si è preferito installare il webserver EasyPHP su una "pen drive" in modo da eliminare la dipendenza da una sola macchina.
-    Basta collegare il disco rimovibile ad una macchina che gira con sistema operativo Windows e avviare il server. (Chiedere 
-    al prof se è stata una buona decisione)
+    Basta collegare il disco rimovibile ad una macchina che gira con sistema operativo Windows e avviare il server.
+    Problema visibilità server all'interno della rete locale.
     
 -Scrivere il codice della pagina web che consente di gestire la comunicazione tra Arduino ed il WebServer
     Creazione database e inserimento dati campione      -FATTO-
@@ -13,11 +13,8 @@ Prossimi passi da fare:
     Pagine web disponibili su github                    -FATTO-
     
 -Implementazione dei casi d'suo
-    UC1, UC2                                            -FATTO-
-    UC3 (ridefinire il caso d'uso, il tipo 
-    di ricerca non ha molto sento) lo stesso 
-    per UC4 e UC5
-    UC6 UC7 UC8 Discuterne!
+                                                        -FATTO-
+    
     
 -Individuare bene l'architettura del sistema            (Chiedere al prof.)
     Trasformare il PC in un router wifi (questo è       -FATTO-
