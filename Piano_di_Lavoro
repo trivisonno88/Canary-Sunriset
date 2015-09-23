@@ -16,15 +16,11 @@ Prossimi passi da fare:
                                                         -FATTO-
     
     
--Individuare bene l'architettura del sistema            (Chiedere al prof.)
-    Trasformare il PC in un router wifi (questo è       -FATTO-
-    necessario dato che arduino deve accedere al 
-    web server locale). Utilizzo del tool
-    Virtual Router o di sistema (Windows 8.1)
-    
-    --> Riusciamo a condividere la conssessione
-    wirelles della macchina su cui gira il server
-    ma come facciamo a ad accedervi ??                  (Chiedere al prof.)
+-Aarchitettura del sistema                              -FATTO-
+    Seguendo i consigli del prof si è preferito
+    utilizzare un router wifi. In questo modo tutti
+    i dispositivi sono connessi alla stessa rete,
+    quindi sono tutti visibili tra di loro.
     
 -Completare documentazione
     Modello di dominio del sistema
