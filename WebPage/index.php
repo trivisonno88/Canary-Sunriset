@@ -1,5 +1,6 @@
 <html>
 <head>
+	<meta name="viewport" content="width=device-width">
 	<title>Pagina di controllo Arduino</title>
 </head>
 <body>

@@ -1,10 +1,11 @@
 <html>
 <head>
-	<title>Cerca Luminosità</title>
+	<meta name="viewport" content="width=device-width">
+	<title>Cerca Umidità</title>
 </head>
 
 <body>
-		<h3>Cerca livello luminosità per data</h3>
+		<h3>Cerca livello umidità per data</h3>
 <?php
 	$connessione = @mysql_connect("localhost", "root", "");
  
@@ -15,16 +16,22 @@
 	mysql_select_db("allevatore_db");
 	echo "<br>Accesso al database<br><br>";
 
-	$data_luminosita = $_POST['data_luminosita'];
-		
-	$query = "SELECT * FROM luminosita WHERE data_time >= '$data_luminosita' AND data_time < '$data_luminosita' + INTERVAL 24 HOUR;"; 
+	$data_umidita = $_POST['data_umidita'];
+	
+	//Lunghezza della stringa data che utilizzo per il controllo data
+	$string = strlen($data_umidita);
+	
+	//Controllo sulla data
+	if ((preg_match('/^\d{4}-\d{2}-\d{2}/', $data_umidita)) AND $string==10)  {	
+	
+	$query = "SELECT * FROM umidita WHERE data_time >= '$data_umidita' AND data_time < '$data_umidita' + INTERVAL 24 HOUR;"; 
 	$data_cercata = mysql_query($query) or die ("Query fallita..."); 
 	
 	// conto il numero di occorrenze trovate nel db
 	$numrows = mysql_num_rows($data_cercata);
 	// se il database è vuoto lo stampo a video
 	if ($numrows == 0){
-		echo "<b>Data non presente nel database!</b><br>";
+		echo "<b>Errore:</b> Data non presente nel database!<br><br>";
 	}
 	
 	else
@@ -35,21 +42,23 @@
     //Recupero il contenuto di ogni record rovato
     $resrow = mysql_fetch_row($data_cercata);
     $data_time = $resrow[0];
-    $livello_luminosita = $resrow[1];
+    $livello_umidita = $resrow[1];
     
     //Stampo il risultato
     echo "<b>Data e Ora:</b> $data_time  ";
-    echo "<b>Livello Luminosità:</b>  " .$livello_luminosita ."<br/>";
-  }
+    echo "<b>Livello Umidità:</b>  " .$livello_umidita ."<br/>";
+	}
 }
+	}
+	else
+		{
+			echo "<b>Errore:</b> Data non inserita correttamente!<br><br>Controlla che la data sia stata inserita correttamente.<br>";
+			echo "Formato ricerca: <b>YYYY-MM-DD</b><br>";
+		}
 ?>
 	
 	<br>
 	<input type="button" id="12" class="led" onclick="location.href='stato_impianto.php'" value="Stato Impianto"/>
-	
-	<!--
-	<input type="button" onclick="location.href='stato_impianto.php'" value="Stato Impianto">
-	-->
 	
 	<!-- Controllare se invia il comando quando passo dalla pagina login a quella stato impianto -->
         <script src="jquery.min.js"></script>
@@ -62,8 +71,6 @@
                         });
                 });
         </script>
-
-
-
+	
 </body>
 </html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+	<meta name="viewport" content="width=device-width">
 	<title>Registrazine Allevatore</title>
 </head>
 <body>

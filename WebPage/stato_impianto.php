@@ -7,7 +7,9 @@
 	
 	<?php
 		
-		$content = file_get_contents('http://192.168.0.3/');
+		//$content = file_get_contents('http://192.168.0.3/');
+
+		$content = file_get_contents('E:\EasyPHP-DevServer-14.1VC11\data\localweb\login_prova.php');
 
 		$valori_letti = explode(",", $content);
 		
