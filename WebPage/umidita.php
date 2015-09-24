@@ -17,7 +17,13 @@
 	echo "<br>Accesso al database<br><br>";
 
 	$data_umidita = $_POST['data_umidita'];
-		
+	
+	//Lunghezza della stringa data che utilizzo per il controllo data
+	$string = strlen($data_umidita);
+	
+	//Controllo sulla data
+	if ((preg_match('/^\d{4}-\d{2}-\d{2}/', $data_umidita)) AND $string==10)  {	
+	
 	$query = "SELECT * FROM umidita WHERE data_time >= '$data_umidita' AND data_time < '$data_umidita' + INTERVAL 24 HOUR;"; 
 	$data_cercata = mysql_query($query) or die ("Query fallita..."); 
 	
@@ -25,7 +31,7 @@
 	$numrows = mysql_num_rows($data_cercata);
 	// se il database è vuoto lo stampo a video
 	if ($numrows == 0){
-		echo "<b>Data non presente nel database!</b><br>";
+		echo "<b>Errore:</b> Data non presente nel database!<br><br>";
 	}
 	
 	else
@@ -41,8 +47,14 @@
     //Stampo il risultato
     echo "<b>Data e Ora:</b> $data_time  ";
     echo "<b>Livello Umidità:</b>  " .$livello_umidita ."<br/>";
-  }
+	}
 }
+	}
+	else
+		{
+			echo "<b>Errore:</b> Data non inserita correttamente!<br><br>Controlla che la data sia stata inserita correttamente.<br>";
+			echo "Formato ricerca: <b>YYYY-MM-DD</b><br>";
+		}
 ?>
 	
 	<br>
