@@ -6,15 +6,18 @@
 	<h3>Stato Impianto</h3>
 	
 	<?php
+		//Ricevo i dati da Arduino leggendoli dal suo indirizzo 
+		$content = file_get_contents('http://192.168.0.3/');
 		
-		//$content = file_get_contents('http://192.168.0.3/');
-
-		$content = file_get_contents('E:\EasyPHP-DevServer-14.1VC11\data\localweb\login_prova.php');
-
+		//Utilizzato per testare le pagine, dalla pagina login_prova.php leggo dei valori inserito da me
+		//$content = file_get_contents('E:\EasyPHP-DevServer-14.1VC11\data\localweb\login_prova.php');
+		
+		//La , separa i valori che vengono inviati da Arduino come una stringa
 		$valori_letti = explode(",", $content);
 		
 		if ($valori_letti != null)
 		{
+			
 		//Dobbiamo aggiungere alla stringa una , perchè altrimenti non 
 		//effettua la conversione da stringa ad int forse per via dello spazio
 		$spazio = $valori_letti[0];		
