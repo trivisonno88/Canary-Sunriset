@@ -19,23 +19,27 @@
 	
 	mysql_select_db("allevatore_db");
 	
+	//Dopo l'accesso al server e al database seleziono dalla tabelle i valori, della data corrente, di temperatura
+	//umidità e luminosità.
 	$queryumidita = "SELECT livello_umidita FROM umidita WHERE DATE(`data_time`) = CURDATE();"; 
 	$querytemperatura = "SELECT temperatura FROM temperatura WHERE DATE(`data_time`) = CURDATE();";
 	$queryluminosita = "SELECT livello_luminosita FROM luminosita WHERE DATE(`data_time`) = CURDATE();";
 	
+	//Valoci cercati memorizzati nelle variabili
 	$data_cercata_umidita = mysql_query($queryumidita) or die ("Query fallita...");
 	$data_cercata_temperatura = mysql_query($querytemperatura) or die ("Query fallita...");	
 	$data_cercata_luminosita = mysql_query($queryluminosita) or die ("Query fallita...");
 	
-	// conto il numero di occorrenze trovate nel db le stesse per i tre valori
+	//Conto il numero di occorrenze trovate nel db le stesse per i tre valori
 	$numrows = mysql_num_rows($data_cercata_umidita);
-	// se il database è vuoto lo stampo a video
+	//Se il database è vuoto lo stampo a video
 	if ($numrows == 0){
 		echo "<b>Nessun valore salvato oggi!</b><br>";
 	}
 	
 	else
-	{	
+	{
+	//Variabili che conterranno la somma dei valori giornalieri
 	$somma_umidita = 0;
 	$somma_temperatura = 0;
 	$somma_luminosita = 0;
@@ -64,6 +68,7 @@
 		$somma_luminosita = $somma_luminosita + $livello_luminosita;
 	}
   
+  //Calcolo i valori medi
   $umidita_media = $somma_umidita/$numrows;
   $temperatura_media = $somma_temperatura/$numrows;
   $luminosita_media = $somma_luminosita/$numrows;
@@ -80,7 +85,6 @@
 	Torna a 
 	<input type="button" id="12" class="led" onclick="location.href='stato_impianto.php'" value="Stato Impianto"/>
 	
-	<!-- Controllare se invia il comando quando passo dalla pagina login a quella stato impianto -->
         <script src="jquery.min.js"></script>
         <script type="text/javascript">
                 $(document).ready(function(){
