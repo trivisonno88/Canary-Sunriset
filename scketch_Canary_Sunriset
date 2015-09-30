@@ -45,7 +45,7 @@ void setup() {
     Serial.begin(9600);
     ESP8266.begin(9600);
   
-    /
+    
     while(!Serial);
     Serial.println("--- Start ---");
 
@@ -56,7 +56,7 @@ void setup() {
       ESP8266.println("AT+CWMODE=1"); // imposta modalità client
       delay(2000);
       
-      //chiude  AP
+    
       Serial.println("Quit AP");
       ESP8266.println("AT+CWQAP"); 
       delay(1000);
