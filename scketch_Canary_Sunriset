@@ -27,6 +27,7 @@ dht DHT;
 
 
 void setup() {
+// inizializza le porte seriali
   Serial.begin(9600);
   ESP8266.begin(9600);
   
@@ -44,7 +45,7 @@ void setup() {
     Serial.begin(9600);
     ESP8266.begin(9600);
   
-    //Wait Serial Monitor to start
+    /
     while(!Serial);
     Serial.println("--- Start ---");
 
@@ -52,12 +53,12 @@ void setup() {
     delay(1000);
     
       Serial.println("Module is ready");
-      ESP8266.println("AT+CWMODE=1");
+      ESP8266.println("AT+CWMODE=1"); // imposta modalità client
       delay(2000);
       
-      //Quit existing AP, for demo
+      //chiude  AP
       Serial.println("Quit AP");
-      ESP8266.println("AT+CWQAP");
+      ESP8266.println("AT+CWQAP"); 
       delay(1000);
       
       clearESP8266SerialBuffer();
@@ -68,13 +69,13 @@ void setup() {
         
         delay(3000);
         clearESP8266SerialBuffer();
-        //Get and display my IP
+        //prende un indirizzo IP
         sendESP8266Cmdln("AT+CIFSR", 1000);  
-        //Set multi connections
+        //imposta la connessione multipla
         sendESP8266Cmdln("AT+CIPMUX=1", 1000);
-        //Setup web server on port 80
+        //inizializza servere su porta 80
         sendESP8266Cmdln("AT+CIPSERVER=1,80",1000);
-        //sendESP8266Cmdln(cmd,1000);
+        //invia una linea di comando;
          
         Serial.println("Server setup finish");
 
@@ -82,7 +83,8 @@ void setup() {
   }
 void loop(){
    
-  SunSetRise(sun,foto,simulationMode);
+  SunSetRise(sun,foto,simulationMode);// lancia la funzione sun set rise ad ogni loop
+                                      // ogni iterzione valuta lo stato simulazione e procede
    
   if(ESP8266.available())
   {
@@ -98,10 +100,10 @@ void loop(){
 
      ESP8266.find("pin="); // advance cursor to "pin="
      
-     int pinNumber = (ESP8266.read()-48)*10; // get first number i.e. if the pin 13 then the 1st number is 1, then multiply to get 10
-     pinNumber += (ESP8266.read()-48); // get second number, i.e. if the pin number is 13 then the 2nd number is 3, then add to the first number
+     int pinNumber = (ESP8266.read()-48)*10; // 
+     pinNumber += (ESP8266.read()-48); // ledde l'id ricevuto
     
-      
+      all'id è associato lo stato della simulazione da variare
      if (pinNumber==11){
        simulationMode=!simulationMode;
        luce = 0.00;
@@ -110,6 +112,8 @@ void loop(){
        nightMode=!ON;
        digitalWrite(pinNumber, !digitalRead(pinNumber)); // toggle pin   
        }
+       
+       // al pin 12 è associato l'aggiornamento dei parametri ambientali
       if (pinNumber==12){
         DHT.read11(DHT11_PIN);
         int L=analogRead(A0);
@@ -127,6 +131,7 @@ void loop(){
         }
     
       
+      //invia risposta 
       sendHTTPResponse(connectionId, strHTML);
       
       //Close TCP/UDP
