@@ -41,12 +41,8 @@
 	
 	echo "<br><b>Dati salvati correttamente</b><br><br>";
 	echo "Torna a ";
-	//echo '<a href="stato_impianto.php">Stato Impianto</a>';
 	?>
-		<!--
-		<input type="button" onclick="location.href='stato_impianto.php'" value="Stato Impianto"/>
-		-->
-		
+
 		<input type="button" id="12" class="led" onclick="location.href='stato_impianto.php'" value="Stato Impianto"/>
 	
 	<?php 
@@ -54,9 +50,8 @@
 	else 
 		{
 	?>	
-	
+
 		<input type="button" id="12" class="led" onclick="location.href='stato_impianto.php'" value="Stato Impianto"/>
-		
 		<br><br>
 
 	<?php		
@@ -64,7 +59,6 @@
 		}
 	?>
 	
-	<!-- Controllare se invia il comando quando passo dalla pagina login a quella stato impianto -->
         <script src="jquery.min.js"></script>
         <script type="text/javascript">
                 $(document).ready(function(){

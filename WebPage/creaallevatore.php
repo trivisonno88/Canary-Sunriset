@@ -23,7 +23,7 @@
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 	
-	if($nome AND $cognome AND $username AND $password != NULL)
+	if($nome AND $cognome AND $username AND $password != NULL) //Ci accertiamo che tutti i campi siano stati riempiti
 	{
 	$sql = "INSERT INTO allevatori (nome, cognome, username, password) VALUES ('$nome', '$cognome', '$username', '$password')";
 	$query_result = mysql_query($sql) or die("Inserimento fallito!");
